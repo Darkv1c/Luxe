@@ -1,0 +1,21 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.star {
+  flex-shrink: 0;
+}
+
+.count {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600, #6b7280);
+  line-height: 1;
+}

@@ -1,0 +1,97 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.iconWrapper {
+  margin-bottom: 1rem;
+}
+
+.icon {
+  color: var(--color-neutral-400, #9ca3af);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 32rem;
+}
+
+.title {
+  font-weight: 600;
+  color: var(--color-neutral-900, #111827);
+  margin: 0;
+}
+
+.description {
+  color: var(--color-neutral-600, #4b5563);
+  margin: 0;
+}
+
+.action {
+  margin-top: 1.5rem;
+}
+
+/* Sizes */
+.compact {
+  padding: 2rem 1rem;
+}
+
+.compact .title {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.compact .description {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.compact .iconWrapper {
+  margin-bottom: 0.75rem;
+}
+
+.compact .action {
+  margin-top: 1rem;
+}
+
+.default {
+  padding: 3rem 1.5rem;
+}
+
+.default .title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.default .description {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.large {
+  padding: 4rem 2rem;
+}
+
+.large .title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.large .description {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.large .iconWrapper {
+  margin-bottom: 1.5rem;
+}
+
+.large .action {
+  margin-top: 2rem;
+}
