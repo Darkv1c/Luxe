@@ -1,0 +1,42 @@
+@import "tailwindcss/theme" reference;
+
+.button {
+  @apply inline-flex items-center justify-center rounded-md font-medium;
+  @apply transition-colors duration-200;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
+}
+
+.primary {
+  @apply bg-blue-600 text-white;
+  @apply hover:bg-blue-700 active:bg-blue-800;
+  @apply focus-visible:ring-blue-500;
+}
+
+.secondary {
+  @apply bg-gray-100 text-gray-900;
+  @apply hover:bg-gray-200 active:bg-gray-300;
+  @apply focus-visible:ring-gray-500;
+}
+
+.outline {
+  @apply border border-gray-300 bg-transparent text-gray-700;
+  @apply hover:bg-gray-50 active:bg-gray-100;
+  @apply focus-visible:ring-gray-500;
+}
+
+.sm {
+  @apply text-sm px-3 py-1.5 h-8;
+}
+
+.md {
+  @apply text-base px-4 py-2 h-10;
+}
+
+.lg {
+  @apply text-lg px-6 py-3 h-12;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
