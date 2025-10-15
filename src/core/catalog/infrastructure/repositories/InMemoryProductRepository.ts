@@ -4,6 +4,12 @@ import { ProductRepository } from '../../domain/ProductRepository';
 export class InMemoryProductRepository implements ProductRepository {
   private items: Map<string, Product> = new Map();
 
+  constructor(initialData?: Product[]) {
+    if (initialData) {
+      initialData.forEach(product => this.items.set(product.id, product));
+    }
+  }
+
   async findById(id: string): Promise<Product | null> {
     return this.items.get(id) ?? null;
   }
