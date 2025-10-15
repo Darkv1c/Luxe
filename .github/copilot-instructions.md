@@ -779,3 +779,331 @@ npm run lint          # ESLint check
 3. `.cursor/rules/design_system_rules.md` - Comprehensive style guide
 4. `vitest.config.ts` - Coverage thresholds and test config
 5. `README.md` - Project overview (in Spanish)
+
+---
+
+---
+
+## Hexagonal Architecture (Ports & Adapters) — Rules & Conventions (ENGLISH ONLY)
+
+NOTE: All rules, comments and documentation MUST be written in English. This repository enforces English for consistency across the codebase and PRs.
+
+To keep the codebase consistent, testable and maintainable, follow these mandatory rules when you implement a new bounded context (for example `catalog`, `checkout`):
+
+### Mandatory Structure
+
+- **Location**: place each bounded context under `src/core/<Context>/`.
+- **Required structure** for every context:
+
+```
+src/core/<Context>/
+├─ application/                # Use-cases (pure orchestration)
+│  ├─ GetXxx.ts               # Use-case implementation
+│  └─ GetXxx.test.ts          # Tests (TDD - write FIRST)
+├─ domain/                     # Entities and ports (interfaces)
+│  ├─ Product.ts              # Domain entity
+│  └─ ProductRepository.ts    # Interface / Port
+├─ infrastructure/             # Adapters (controllers, repositories, mappers)
+│  ├─ controllers/
+│  │  └─ CatalogController.ts
+│  ├─ repositories/
+│  │  ├─ ApiProductRepository.ts
+│  │  └─ InMemoryProductRepository.ts
+│  └─ mappers/
+│     └─ ProductMapper.ts
+├─ Dependencies.ts             # Composition root (wiring) - CamelCase file name
+└─ index.ts                    # Barrel export for the context
+```
+
+### File Naming
+
+- Use **CamelCase** for all TypeScript files (e.g. `GetProduct.ts`, `ProductRepository.ts`, `Dependencies.ts`, `ProductMapper.ts`).
+- **NEVER** create files that differ only by casing (e.g. `Dependencies.ts` vs `dependencies.ts`) — this causes TypeScript and CI problems on case-insensitive filesystems.
+
+### Separation of Concerns
+
+- **`domain/`**: contain ONLY types, entities and ports (interfaces). No I/O or infrastructure references.
+  ```typescript
+  // domain/ProductRepository.ts
+  export interface ProductRepository {
+    findById(id: string): Promise<Product | null>;
+  }
+  ```
+
+- **`application/`**: pure use-cases (orchestration of domain). Write tests for use-cases FIRST (TDD) before implementation.
+  ```typescript
+  // application/GetProduct.ts
+  export class GetProduct {
+    constructor(private repo: ProductRepository) {}
+    
+    async execute(id: string): Promise<Product | null> {
+      if (!id || id.trim() === '') {
+        throw new Error('Product ID is required');
+      }
+      return this.repo.findById(id.trim());
+    }
+  }
+  ```
+
+- **`infrastructure/`**: adapters (HTTP controllers, DB or API repositories, mappers, clients).
+  ```typescript
+  // infrastructure/repositories/ApiProductRepository.ts
+  export class ApiProductRepository implements ProductRepository {
+    async findById(id: string): Promise<Product | null> {
+      const response = await fetch(`/api/products/${id}`);
+      const data = await response.json();
+      return mapExternalToProduct(data);
+    }
+  }
+  ```
+
+- **`Dependencies.ts`**: the SINGLE place to instantiate concrete implementations and compose controllers/use-cases. Do not instantiate infrastructure inside `domain`.
+  ```typescript
+  // Dependencies.ts
+  export interface CatalogDependenciesType {
+    controller: CatalogController;
+    apiRepo: ProductRepository;
+    inMemoryRepo: ProductRepository;
+    getProductUseCase: GetProduct;
+  }
+
+  const inMemoryRepo = new InMemoryProductRepository();
+  const apiRepo = new ApiProductRepository();
+  const getProductUseCase = new GetProduct(apiRepo);
+
+  export const CatalogDependencies: CatalogDependenciesType = {
+    controller: new CatalogController(getProductUseCase),
+    apiRepo,
+    inMemoryRepo,
+    getProductUseCase,
+  };
+
+  // Export individual parts for testing flexibility
+  export { apiRepo, inMemoryRepo, getProductUseCase };
+  ```
+
+### Controllers
+
+Controllers live under `infrastructure/controllers/`. **Prefer injecting use-cases into controllers** instead of injecting repositories and creating use-cases inside the controller.
+
+**Recommended wiring**:
+
+```typescript
+// ✅ GOOD: Controller receives use-case
+export class CatalogController {
+  constructor(private getProductUseCase: GetProduct) {}
+  
+  async getProduct(id: string): Promise<Product | null> {
+    return this.getProductUseCase.execute(id);
+  }
+}
+
+// Dependencies.ts wiring:
+const getProduct = new GetProduct(apiRepo);
+const controller = new CatalogController(getProduct);
+```
+
+**Anti-pattern**:
+
+```typescript
+// ❌ BAD: Controller creates use-case internally
+export class CatalogController {
+  constructor(private repo: ProductRepository) {}
+  
+  async getProduct(id: string) {
+    const useCase = new GetProduct(this.repo); // Don't do this
+    return useCase.execute(id);
+  }
+}
+```
+
+### Mappers
+
+Transformations between external shapes (API responses) and domain models must live under `infrastructure/mappers/` and be used by infrastructure repositories.
+
+```typescript
+// infrastructure/mappers/ProductMapper.ts
+export function mapExternalToProduct(external: ExternalProductDTO): Product {
+  return {
+    id: external.productId,
+    name: external.productName,
+    priceCents: external.price * 100,
+  };
+}
+
+// Usage in repository:
+// infrastructure/repositories/ApiProductRepository.ts
+async findById(id: string): Promise<Product | null> {
+  const response = await fetch(`/api/products/${id}`);
+  const external = await response.json();
+  return mapExternalToProduct(external); // Transform to domain model
+}
+```
+
+### HTTP/Clients
+
+- **Do NOT** call `fetch` directly from `domain`.
+- Use an HTTP wrapper or an injectable client from `infrastructure` and convert responses into domain types via mappers.
+- Consider injecting an `HttpClient` for testability.
+
+```typescript
+// infrastructure/clients/HttpClient.ts
+export interface HttpClient {
+  get<T>(url: string): Promise<T>;
+  post<T>(url: string, body: unknown): Promise<T>;
+}
+
+// infrastructure/repositories/ApiProductRepository.ts
+export class ApiProductRepository implements ProductRepository {
+  constructor(private httpClient: HttpClient) {}
+  
+  async findById(id: string): Promise<Product | null> {
+    const external = await this.httpClient.get<ExternalProductDTO>(`/api/products/${id}`);
+    return mapExternalToProduct(external);
+  }
+}
+```
+
+### Tests and TDD
+
+Follow repository rules — **write tests BEFORE implementing code**. For use-cases:
+
+1. **Create test file first**: `GetProduct.test.ts` next to the use-case in `application/`
+2. **Write failing tests** (RED phase)
+3. **Run tests in watch mode**: `npm run test:watch`
+4. **Mock `ProductRepository`** with `vi.fn()` or use `InMemoryProductRepository` for unit tests
+5. **Implement minimal code** to pass tests (GREEN phase)
+6. **Refactor** while keeping tests green (REFACTOR phase)
+7. **Cover all scenarios**: happy path, null/empty results, error handling
+
+```typescript
+// application/GetProduct.test.ts
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { GetProduct } from './GetProduct';
+import type { ProductRepository } from '../domain/ProductRepository';
+
+describe('GetProduct', () => {
+  let mockRepo: ProductRepository;
+  let useCase: GetProduct;
+
+  beforeEach(() => {
+    mockRepo = {
+      findById: vi.fn(),
+      save: vi.fn(),
+      listAll: vi.fn(),
+    };
+    useCase = new GetProduct(mockRepo);
+  });
+
+  it('should return product when found', async () => {
+    const mockProduct = { id: '1', name: 'Test', priceCents: 9999 };
+    vi.mocked(mockRepo.findById).mockResolvedValue(mockProduct);
+
+    const result = await useCase.execute('1');
+
+    expect(result).toEqual(mockProduct);
+    expect(mockRepo.findById).toHaveBeenCalledWith('1');
+  });
+
+  it('should return null when not found', async () => {
+    vi.mocked(mockRepo.findById).mockResolvedValue(null);
+
+    const result = await useCase.execute('999');
+
+    expect(result).toBeNull();
+  });
+
+  it('should throw error for empty id', async () => {
+    await expect(useCase.execute('')).rejects.toThrow('Product ID is required');
+    expect(mockRepo.findById).not.toHaveBeenCalled();
+  });
+
+  it('should trim whitespace from id', async () => {
+    vi.mocked(mockRepo.findById).mockResolvedValue(null);
+
+    await useCase.execute('  product-123  ');
+
+    expect(mockRepo.findById).toHaveBeenCalledWith('product-123');
+  });
+});
+```
+
+**Coverage requirements** (enforced in `vitest.config.ts`):
+- Branches: 90%
+- Functions: 90%
+- Lines: 90%
+- Statements: 90%
+
+### Wiring & Flexibility
+
+Export the default wiring object from `Dependencies.ts` (e.g. `CatalogDependencies`) **AND** also export concrete implementations (`apiRepo`, `inMemoryRepo`) so tests can swap implementations easily.
+
+```typescript
+// Dependencies.ts
+export const CatalogDependencies = { /* ... */ };
+
+// Also export individual parts
+export { apiRepo, inMemoryRepo, getProductUseCase };
+
+// Tests can now use:
+import { inMemoryRepo } from '@/core/catalog';
+const testUseCase = new GetProduct(inMemoryRepo);
+```
+
+### Barrel Exports
+
+Add an `index.ts` barrel in the context root to export the public API of the bounded context. Keep `domain` minimal and focused on core types.
+
+```typescript
+// index.ts
+export * from './domain/Product';
+export * from './domain/ProductRepository';
+export * from './application/GetProduct';
+export * from './infrastructure/repositories/InMemoryProductRepository';
+export * from './infrastructure/repositories/ApiProductRepository';
+export * from './Dependencies';
+```
+
+### Example: Complete Catalog Context
+
+See `src/core/catalog/` for a reference implementation:
+
+- ✅ Clean separation of layers (domain/application/infrastructure)
+- ✅ Use-case with comprehensive tests (`GetProduct.test.ts`)
+- ✅ Typed dependencies object (`CatalogDependenciesType`)
+- ✅ Controller receives use-case injection (not repository)
+- ✅ Mappers for external data transformation
+- ✅ In-memory repository for testing
+- ✅ Barrel exports in `index.ts`
+
+### Quick Checklist
+
+When creating a new bounded context:
+
+- [ ] Create folder structure: `application/`, `domain/`, `infrastructure/`
+- [ ] Define domain entities and repository interfaces (ports)
+- [ ] Write use-case tests FIRST (TDD)
+- [ ] Implement use-cases with error handling
+- [ ] Create infrastructure adapters (repositories, controllers)
+- [ ] Add mappers for external data transformations
+- [ ] Wire everything in `Dependencies.ts` with TypeScript types
+- [ ] Export public API via `index.ts`
+- [ ] Run tests and achieve 90%+ coverage
+- [ ] Document in English (code comments, READMEs)
+
+### Anti-Patterns to Avoid
+
+❌ Creating use-cases inside controllers  
+❌ Calling `fetch` from domain layer  
+❌ Instantiating infrastructure inside domain  
+❌ Skipping tests or writing them after implementation  
+❌ Case-only filename variations (`Dependencies.ts` vs `dependencies.ts`)  
+❌ Hardcoding dependencies instead of injecting  
+❌ Placing mappers outside `infrastructure/mappers/`  
+❌ Missing error validation in use-cases  
+❌ Not exporting individual parts from Dependencies for testing  
+
+---
+
+**For detailed examples and best practices, see `src/core/README.md`.**
+
