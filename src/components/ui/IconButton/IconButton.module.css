@@ -1,92 +1,58 @@
+@import "tailwindcss/theme" reference;
+
 .iconButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-  border-radius: 0.5rem;
-}
-
-.iconButton:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.iconButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+  @apply inline-flex items-center justify-center border-none cursor-pointer flex-shrink-0 rounded-lg;
+  @apply transition-all duration-200;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
 }
 
 /* Sizes */
 .sm {
-  padding: 0.375rem;
-  min-width: 2rem;
-  min-height: 2rem;
+  @apply p-1.5 min-w-8 min-h-8;
 }
 
 .md {
-  padding: 0.5rem;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
+  @apply p-2 min-w-11 min-h-11; /* 44px - WCAG touch target */
 }
 
 .lg {
-  padding: 0.625rem;
-  min-width: 3rem;
-  min-height: 3rem;
+  @apply p-2.5 min-w-12 min-h-12;
 }
 
 /* Variants */
 .default {
-  background-color: transparent;
-  color: var(--color-neutral-700, #374151);
-}
-
-.default:hover:not(:disabled) {
-  background-color: var(--color-neutral-100, #f3f4f6);
-  color: var(--color-neutral-900, #111827);
+  @apply bg-transparent text-gray-700;
+  @apply hover:bg-gray-100 hover:text-gray-900;
 }
 
 .default.active {
-  background-color: var(--color-neutral-100, #f3f4f6);
-  color: var(--color-primary-600, #2563eb);
+  @apply bg-gray-100 text-blue-600;
 }
 
 .primary {
-  background-color: var(--color-primary-500, #3b82f6);
-  color: white;
-}
-
-.primary:hover:not(:disabled) {
-  background-color: var(--color-primary-600, #2563eb);
+  @apply bg-blue-500 text-white;
+  @apply hover:bg-blue-600;
 }
 
 .primary.active {
-  background-color: var(--color-primary-700, #1d4ed8);
+  @apply bg-blue-700;
 }
 
 .ghost {
-  background-color: transparent;
-  color: var(--color-neutral-600, #4b5563);
-}
-
-.ghost:hover:not(:disabled) {
-  color: var(--color-neutral-900, #111827);
+  @apply bg-transparent text-gray-600;
+  @apply hover:text-gray-900;
 }
 
 .ghost.active {
-  color: var(--color-primary-600, #2563eb);
+  @apply text-blue-600;
 }
 
 /* Rounded */
 .rounded {
-  border-radius: 9999px;
+  @apply rounded-full;
 }
 
 .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  @apply opacity-50 cursor-not-allowed;
 }

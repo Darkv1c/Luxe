@@ -1,0 +1,35 @@
+
+ DEV  v3.2.4 /workspaces/Luxe
+
+ ✓ src/components/ui/Checkbox/Checkbox.test.tsx (23 tests) 1686ms
+   ✓ Checkbox > renders checkbox element  401ms
+ ✓ src/components/ui/IconButton/IconButton.test.tsx (22 tests) 2108ms
+   ✓ IconButton > renders icon button  456ms
+ ✓ src/components/ui/Select/Select.test.tsx (19 tests) 1174ms
+   ✓ Select > renders select element  460ms
+ ✓ src/components/ui/Input/Input.test.tsx (19 tests) 902ms
+   ✓ Input > renders input element  338ms
+ ✓ src/components/ui/Slider/Slider.test.tsx (18 tests) 1202ms
+   ✓ Slider > renders slider input  358ms
+ ✓ src/components/ui/Button/Button.test.tsx (12 tests) 869ms
+ ✓ src/components/ui/Navbar/Navbar.test.tsx (3 tests) 563ms
+   ✓ Navbar > renders logo and navigation links  326ms
+ ✓ src/components/ui/EmptyState/EmptyState.test.tsx (14 tests) 485ms
+ ✓ src/components/ui/Loading/Loading.test.tsx (14 tests) 453ms
+   ✓ Loading > shows text label when showLabel is true  334ms
+ ✓ src/components/ui/RatingStars/RatingStars.test.tsx (11 tests) 266ms
+ ✓ src/components/ui/Badge/Badge.test.tsx (12 tests) 120ms
+ ✓ src/core/catalog/application/GetProductReviews.test.ts (4 tests) 7ms
+ ✓ src/core/catalog/application/GetProduct.test.ts (12 tests) 16ms
+ ✓ src/components/ui/Icon/Icon.test.tsx (14 tests) 103ms
+ ✓ src/core/catalog/application/GetAllProducts.test.ts (3 tests) 12ms
+ ✓ src/core/catalog/application/GetAllBrands.test.ts (2 tests) 4ms
+ ✓ src/core/catalog/application/GetAllCategories.test.ts (2 tests) 5ms
+
+ Test Files  17 passed (17)
+      Tests  204 passed (204)
+   Start at  02:51:22
+   Duration  192.38s (transform 10.14s, setup 92.93s, collect 142.12s, tests 9.98s, environment 470.45s, prepare 67.58s)
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit

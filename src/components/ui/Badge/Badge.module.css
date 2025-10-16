@@ -1,51 +1,39 @@
+@import "tailwindcss/theme" reference;
+
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: 500;
-  border-radius: 0.375rem;
-  line-height: 1;
-  white-space: nowrap;
+  @apply inline-flex items-center gap-1 font-medium rounded-md leading-none whitespace-nowrap;
 }
 
 /* Sizes */
 .sm {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
+  @apply px-2 py-1 text-xs;
 }
 
 .md {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
+  @apply px-3 py-1.5 text-sm;
 }
 
 .lg {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  @apply px-4 py-2 text-base;
 }
 
 /* Variants */
 .default {
-  background-color: var(--color-neutral-100, #f3f4f6);
-  color: var(--color-neutral-800, #1f2937);
+  @apply bg-neutral-100 text-neutral-800;
 }
 
 .primary {
-  background-color: var(--color-primary-100, #dbeafe);
-  color: var(--color-primary-800, #1e40af);
+  @apply bg-blue-100 text-blue-800;
 }
 
 .success {
-  background-color: var(--color-success-50, #f0fdf4);
-  color: var(--color-success-900, #14532d);
+  @apply bg-green-50 text-green-900;
 }
 
 .warning {
-  background-color: var(--color-warning-50, #fffbeb);
-  color: var(--color-warning-900, #78350f);
+  @apply bg-amber-50 text-amber-900;
 }
 
 .error {
-  background-color: var(--color-error-50, #fef2f2);
-  color: var(--color-error-900, #7f1d1d);
+  @apply bg-red-50 text-red-900;
 }

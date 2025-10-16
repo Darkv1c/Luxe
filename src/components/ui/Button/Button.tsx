@@ -2,12 +2,10 @@ import { ReactNode, ButtonHTMLAttributes } from 'react';
 import styles from './Button.module.css';
 import { cn } from '@/lib/utils';
 
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
-  onClick?: () => void;
   className?: string;
 }
 
@@ -16,7 +14,6 @@ export function Button({
   variant = 'primary',
   size = 'md',
   disabled = false,
-  onClick,
   className,
   ...props
 }: ButtonProps) {
@@ -30,7 +27,6 @@ export function Button({
         className
       )}
       disabled={disabled}
-      onClick={onClick}
       {...props}
     >
       {children}

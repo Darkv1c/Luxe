@@ -1,6 +1,5 @@
+@import "tailwindcss/theme" reference;
+
 .icon {
-  display: inline-block;
-  vertical-align: middle;
-  flex-shrink: 0;
-  color: currentColor;
+  @apply inline-block align-middle flex-shrink-0 text-current;
 }

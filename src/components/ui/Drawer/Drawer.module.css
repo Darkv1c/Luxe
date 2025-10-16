@@ -1,0 +1,10 @@
+@import "tailwindcss/theme" reference;
+
+.backdrop {
+  @apply fixed inset-0 flex items-start justify-end z-50;
+  @apply bg-black/40;
+}
+
+.drawer {
+  @apply w-full max-w-md h-full bg-white shadow-lg p-4;
+}

@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes, ChangeEvent } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, generateId } from '@/lib/utils';
 import styles from './Slider.module.css';
 
 export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> {
@@ -40,7 +40,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     },
     ref
   ) => {
-    const sliderId = id || `slider-${Math.random().toString(36).substr(2, 9)}`;
+    const sliderId = id || generateId('slider');
     const currentValue = value ?? defaultValue ?? min;
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 import { forwardRef, SelectHTMLAttributes } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, generateId } from '@/lib/utils';
 import { Icon } from '../Icon';
 import styles from './Select.module.css';
 
@@ -38,7 +38,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     },
     ref
   ) => {
-    const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+    const selectId = id || generateId('select');
 
     return (
       <div className={styles.wrapper}>

@@ -1,97 +1,82 @@
+@import "tailwindcss/theme" reference;
+
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
+  @apply flex flex-col items-center justify-center text-center w-full;
 }
 
 .iconWrapper {
-  margin-bottom: 1rem;
+  @apply mb-4;
 }
 
 .icon {
-  color: var(--color-neutral-400, #9ca3af);
+  @apply text-gray-400;
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-width: 32rem;
+  @apply flex flex-col gap-2 max-w-2xl;
 }
 
 .title {
-  font-weight: 600;
-  color: var(--color-neutral-900, #111827);
-  margin: 0;
+  @apply font-semibold text-gray-900 m-0;
 }
 
 .description {
-  color: var(--color-neutral-600, #4b5563);
-  margin: 0;
+  @apply text-gray-600 m-0;
 }
 
 .action {
-  margin-top: 1.5rem;
+  @apply mt-6;
 }
 
 /* Sizes */
 .compact {
-  padding: 2rem 1rem;
+  @apply py-8 px-4;
 }
 
 .compact .title {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  @apply text-base;
 }
 
 .compact .description {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  @apply text-sm;
 }
 
 .compact .iconWrapper {
-  margin-bottom: 0.75rem;
+  @apply mb-3;
 }
 
 .compact .action {
-  margin-top: 1rem;
+  @apply mt-4;
 }
 
 .default {
-  padding: 3rem 1.5rem;
+  @apply py-12 px-6;
 }
 
 .default .title {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+  @apply text-xl;
 }
 
 .default .description {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  @apply text-base;
 }
 
 .large {
-  padding: 4rem 2rem;
+  @apply py-16 px-8;
 }
 
 .large .title {
-  font-size: 1.5rem;
-  line-height: 2rem;
+  @apply text-2xl;
 }
 
 .large .description {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
+  @apply text-lg;
 }
 
 .large .iconWrapper {
-  margin-bottom: 1.5rem;
+  @apply mb-6;
 }
 
 .large .action {
-  margin-top: 2rem;
+  @apply mt-8;
 }

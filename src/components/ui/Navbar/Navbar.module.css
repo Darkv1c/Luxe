@@ -1,0 +1,41 @@
+@import "tailwindcss/theme" reference;
+
+.header {
+  @apply flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200;
+}
+
+.left {
+  @apply flex items-center gap-4 md:gap-6;
+}
+
+.logo {
+  @apply h-8 w-auto md:h-8;
+}
+
+.nav {
+  @apply hidden md:flex items-center gap-4;
+}
+
+.mobileOnly {
+  @apply md:hidden;
+}
+
+.drawerNav {
+  @apply flex flex-col gap-4;
+}
+
+.link {
+  @apply text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-sm;
+}
+
+.link:active {
+  @apply text-gray-900;
+}
+
+.center {
+  @apply flex-1 px-4 md:px-6;
+}
+
+.right {
+  @apply flex items-center gap-2;
+}

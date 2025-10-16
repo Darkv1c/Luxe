@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes, useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, generateId } from '@/lib/utils';
 import styles from './Checkbox.module.css';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
@@ -26,15 +26,15 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     },
     ref
   ) => {
-    const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+    const checkboxId = id || generateId('checkbox');
     const internalRef = useRef<HTMLInputElement>(null);
-    const checkboxRef = (ref || internalRef) as React.RefObject<HTMLInputElement>;
 
     useEffect(() => {
-      if (checkboxRef.current) {
-        checkboxRef.current.indeterminate = indeterminate;
+      const element = (ref as React.RefObject<HTMLInputElement>)?.current || internalRef.current;
+      if (element) {
+        element.indeterminate = indeterminate;
       }
-    }, [indeterminate, checkboxRef]);
+    }, [indeterminate, ref]);
 
     return (
       <div
@@ -49,7 +49,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       >
         <div className={styles.checkboxContainer}>
           <input
-            ref={checkboxRef}
+            ref={ref || internalRef}
             type="checkbox"
             id={checkboxId}
             className={cn(styles.checkbox, styles[size])}

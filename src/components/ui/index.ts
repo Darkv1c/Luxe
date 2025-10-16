@@ -41,3 +41,11 @@ export type { EmptyStateProps } from './EmptyState';
 // Loading
 export { Loading } from './Loading';
 export type { LoadingProps } from './Loading';
+
+// Navbar
+export { Navbar } from './Navbar';
+export type { } from './Navbar';
+
+// Drawer
+export { Drawer } from './Drawer';
+export type { DrawerProps } from './Drawer';
