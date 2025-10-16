@@ -100,6 +100,32 @@ export class CatalogController {
 }
 ```
 
+### HTTP patterns: GETs, endpoints and Server Actions
+
+When designing how to fetch or mutate data from the app, follow these simple rules to keep separation of concerns, testability and the hexagonal architecture intact:
+
+- One-time GETs that should be called exactly once for the page (data used by the server-rendered UI and not re-fetched on the client) should be fetched in Server Components (server-side). Use server components to call repositories/use-cases or to delegate to controllers via `Dependencies.ts`. This keeps fast, cacheable renders and keeps UI logic on the server.
+
+- Repeated or dynamic GETs (for example: the same page may fetch different data when search params change, or the request must be retried from the client) should be done from the client against an endpoint (Next.js `app/api/.../route.ts`), and the client component should call that endpoint. Treat different search params as different pages for caching/routing concerns.
+
+- Mutations (POST / PUT / DELETE) must be implemented as Server Actions. Server Actions are the recommended pattern for forms and mutating operations invoked from components because they run on the server, integrate with RSC semantics, and keep mutation side-effects off the client. Server Actions should delegate to application use-cases/controllers (via `Dependencies.ts`) to perform business logic and persistence.
+
+Guidelines and examples:
+
+- Server Component GET (one-time):
+  - Where: inside a server component (page or layout) or a controller called from it.
+  - Why: called once per render, can use server-side resources and caching.
+
+- Client endpoint GET (dynamic / multiple calls):
+  - Where: implement a Next.js API route under `src/app/api/.../route.ts` and call it from client components using `fetch` or a client data hook.
+  - Why: endpoints are explicit HTTP adapters; use them when the client must re-request data during the page lifecycle or when different search params produce different results.
+
+- Server Actions for mutations:
+  - Where: define a Server Action and have it delegate to a use-case/controller from `src/core/...`.
+  - Why: keeps mutation logic server-side, testable, and aligned with React Server Components and Next.js conventions.
+
+Note: Always keep business logic inside use-cases (application/) and controllers (infrastructure/) — Server Actions and endpoints should orchestrate and delegate, not contain domain logic.
+
 ### 4. Mappers
 
 Transformations between external shapes (API responses) and domain models must live under `infrastructure/mappers/`:
