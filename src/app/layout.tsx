@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Luxe - E-commerce Premium",
-  description: "E-commerce de productos premium con diseño moderno y elegante",
+  description: "Premium e-commerce for curated products with modern, elegant design",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body>
         {children}
       </body>
